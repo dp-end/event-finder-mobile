@@ -12,8 +12,19 @@ class _EtkinlikOlusturEkraniState extends State<EtkinlikOlusturEkrani> {
   final _formKey = GlobalKey<FormState>();
   bool _yukleniyor = false;
   String _seciliKategori = 'Teknoloji';
+  
+  // YENİ EKLENDİ: Fotoğraf seçilip seçilmediğini tutan hafıza
+  bool _fotoSecildi = false; 
 
   void _etkinlikKaydet() async {
+    // Fotoğraf seçilmemişse uyarı ver
+    if (!_fotoSecildi) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Lütfen bir etkinlik afişi yükleyin!'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
     // Eğer zorunlu alanlar doldurulduysa
     if (_formKey.currentState!.validate()) {
       setState(() => _yukleniyor = true); // Yükleniyor animasyonunu başlat
@@ -61,6 +72,61 @@ class _EtkinlikOlusturEkraniState extends State<EtkinlikOlusturEkrani> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // YENİ EKLENDİ: DİNAMİK FOTOĞRAF YÜKLEME ALANI
+                  const Text('Etkinlik Afişi', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      // Tıklanınca fotoğraf seçilmiş gibi UI'ı günceller
+                      setState(() => _fotoSecildi = !_fotoSecildi);
+                    },
+                    child: Container(
+                      height: 180,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: _fotoSecildi ? const Color(0xFF1D4ED8) : Colors.grey.shade300, 
+                          width: 2
+                        ),
+                      ),
+                      child: _fotoSecildi 
+                        // Fotoğraf seçildiyse gösterilecek kısım
+                        ? Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(14),
+                                child: Image.network('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800', fit: BoxFit.cover),
+                              ),
+                              Positioned(
+                                top: 8, right: 8,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.close, color: Colors.red),
+                                    onPressed: () => setState(() => _fotoSecildi = false),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        // Fotoğraf seçilmediyse gösterilecek boş kutu
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey.shade400),
+                              const SizedBox(height: 12),
+                              const Text('Afiş veya Fotoğraf Yükle', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
+                              const SizedBox(height: 4),
+                              Text('PNG, JPG (Maks. 5MB)', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                            ],
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
                   // BAŞLIK
                   const Text('Etkinlik Başlığı', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
@@ -85,7 +151,7 @@ class _EtkinlikOlusturEkraniState extends State<EtkinlikOlusturEkrani> {
                   ),
                   const SizedBox(height: 20),
                   
-                  // TARİH VE SAAT (Şimdilik metin kutusu, backend'de DatePicker yaparız)
+                  // TARİH VE SAAT
                   Row(
                     children: [
                       Expanded(

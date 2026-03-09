@@ -16,6 +16,7 @@ class KullaniciKayitEkrani extends StatelessWidget {
           const CustomTextField(hint: 'Telefon Numarası', icon: Icons.phone_outlined), const SizedBox(height: 16),
           const CustomTextField(hint: 'Doğum Tarihi', icon: Icons.calendar_today), const SizedBox(height: 16),
           _buildDropdown(), const SizedBox(height: 16),
+          _buildDropdown2(), const SizedBox(height: 16),
           const CustomTextField(hint: 'Şifre', icon: Icons.lock_outline, isPassword: true), const SizedBox(height: 32),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1D4ED8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
@@ -32,6 +33,14 @@ class KullaniciKayitEkrani extends StatelessWidget {
       decoration: InputDecoration(prefixIcon: const Icon(Icons.account_balance_outlined, color: Colors.grey), filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none)),
       hint: const Text('Üniversite Seçimi'),
       items: const [DropdownMenuItem(value: '1', child: Text('Akdeniz Üniversitesi')), DropdownMenuItem(value: '2', child: Text('Diğer'))],
+      onChanged: (val) {},
+    );
+  }
+  Widget _buildDropdown2() {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(prefixIcon: const Icon(Icons.person, color: Colors.grey), filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none)),
+      hint: const Text('Cinsiyet Seçimi'),
+      items: const [DropdownMenuItem(value: '1', child: Text('Erkek')), DropdownMenuItem(value: '2', child: Text('Kadın'))],
       onChanged: (val) {},
     );
   }
