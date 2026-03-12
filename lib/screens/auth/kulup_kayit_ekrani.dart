@@ -17,7 +17,7 @@ class KulupKayitEkrani extends StatelessWidget {
           const CustomTextField(hint: 'Kulüp Telefonu', icon: Icons.phone_outlined), const SizedBox(height: 16),
           const CustomTextField(hint: 'Referans Numarası', icon: Icons.tag), const SizedBox(height: 16),
           DropdownButtonFormField<String>(
-            decoration: InputDecoration(prefixIcon: const Icon(Icons.account_balance_outlined, color: Colors.grey), filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none)),
+            decoration: InputDecoration(prefixIcon: const Icon(Icons.account_balance_outlined, color: Colors.grey), filled: true, fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[850] : Colors.grey[50], border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none)),
             items: const [DropdownMenuItem(value: '1', child: Text('Akdeniz Üniversitesi'))],
             onChanged: (val) {},
             hint: const Text('Üniversite Seçimi'),

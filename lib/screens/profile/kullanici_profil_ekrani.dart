@@ -7,7 +7,6 @@ class KullaniciProfilEkrani extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Profilim', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
@@ -35,7 +34,7 @@ class KullaniciProfilEkrani extends StatelessWidget {
                   bottom: -50,
                   child: CircleAvatar(
                     radius: 54,
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
                     child: const CircleAvatar(
                       radius: 50,
                       backgroundColor: Color(0xFF1D4ED8),

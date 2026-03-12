@@ -14,63 +14,20 @@ class _AnaSayfaState extends State<AnaSayfa> {
   String _aramaMetni = '';
   String _seciliKategori = 'Tümü';
   
-  // Gelişmiş Filtre (Sağ Üstteki İkon İçin)
+  // Gelişmiş Filtre
   bool _sadeceUcretsiz = false;
-  double _maxFiyat = 200; // Varsayılan en yüksek fiyat sınırı
-  String _seciliZaman = 'Tümü'; // 'Tümü', 'Bugün', 'Bu Hafta', 'Bu Ay'
+  double _maxFiyat = 200; 
+  String _seciliZaman = 'Tümü'; 
 
-  // GÜNCELLENMİŞ SAHTE VERİTABANIMIZ (Artık sayısal fiyat ve tarih içeriyor)
   final List<Map<String, dynamic>> _tumEtkinlikler = [
-    {
-      'baslik': 'Yapay Zeka Zirvesi',
-      'kulup': 'Tech Innovators',
-      'kategori': 'Teknoloji',
-      'fiyat': 0, // 0 = Ücretsiz
-      'zamanDilimi': 'Bu Hafta',
-      'tarih': '15 Mart • 14:00',
-      'resimUrl': 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400'
-    },
-    {
-      'baslik': 'Bahar Şenliği Konseri',
-      'kulup': 'Music Society',
-      'kategori': 'Müzik',
-      'fiyat': 150,
-      'zamanDilimi': 'Bu Ay',
-      'tarih': '28 Mart • 20:00',
-      'resimUrl': 'https://images.unsplash.com/photo-1540039155732-68ee23e15b51?w=400'
-    },
-    {
-      'baslik': 'Doğa Yürüyüşü',
-      'kulup': 'Outdoor Club',
-      'kategori': 'Spor',
-      'fiyat': 0,
-      'zamanDilimi': 'Bugün',
-      'tarih': 'Bugün • 09:00',
-      'resimUrl': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400'
-    },
-    {
-      'baslik': 'Girişimcilik 101',
-      'kulup': 'Business Club',
-      'kategori': 'Teknoloji',
-      'fiyat': 50,
-      'zamanDilimi': 'Bu Hafta',
-      'tarih': '18 Mart • 13:00',
-      'resimUrl': 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400'
-    },
-    {
-      'baslik': 'Basketbol Turnuvası',
-      'kulup': 'Athletics Assoc.',
-      'kategori': 'Spor',
-      'fiyat': 20,
-      'zamanDilimi': 'Bu Hafta',
-      'tarih': '19 Mart • 16:00',
-      'resimUrl': 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=400'
-    },
+    {'baslik': 'Yapay Zeka Zirvesi', 'kulup': 'Tech Innovators', 'kategori': 'Teknoloji', 'fiyat': 0, 'zamanDilimi': 'Bu Hafta', 'tarih': '15 Mart • 14:00', 'resimUrl': 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400'},
+    {'baslik': 'Bahar Şenliği Konseri', 'kulup': 'Music Society', 'kategori': 'Müzik', 'fiyat': 150, 'zamanDilimi': 'Bu Ay', 'tarih': '28 Mart • 20:00', 'resimUrl': 'https://images.unsplash.com/photo-1540039155732-68ee23e15b51?w=400'},
+    {'baslik': 'Doğa Yürüyüşü', 'kulup': 'Outdoor Club', 'kategori': 'Spor', 'fiyat': 0, 'zamanDilimi': 'Bugün', 'tarih': 'Bugün • 09:00', 'resimUrl': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400'},
+    {'baslik': 'Girişimcilik 101', 'kulup': 'Business Club', 'kategori': 'Teknoloji', 'fiyat': 50, 'zamanDilimi': 'Bu Hafta', 'tarih': '18 Mart • 13:00', 'resimUrl': 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400'},
+    {'baslik': 'Basketbol Turnuvası', 'kulup': 'Athletics Assoc.', 'kategori': 'Spor', 'fiyat': 20, 'zamanDilimi': 'Bu Hafta', 'tarih': '19 Mart • 16:00', 'resimUrl': 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=400'},
   ];
 
-  // AŞAĞIDAN AÇILAN FİLTRE MENÜSÜ FONKSİYONU
   void _filtreMenusuAc(BuildContext context) {
-    // Menü ilk açıldığında anlık filtreleri geçici değişkenlere alıyoruz
     bool modalUcretsiz = _sadeceUcretsiz;
     double modalMaxFiyat = _maxFiyat;
     String modalZaman = _seciliZaman;
@@ -78,9 +35,9 @@ class _AnaSayfaState extends State<AnaSayfa> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // GECE MODU UYUMU
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
-        // StatefulBuilder: Alt menünün içindeki değişiklikleri anında (kapatmadan) gösterir
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
             return Padding(
@@ -89,25 +46,20 @@ class _AnaSayfaState extends State<AnaSayfa> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10)))),
+                  Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[400], borderRadius: BorderRadius.circular(10)))),
                   const SizedBox(height: 16),
-                  
                   const Text('Gelişmiş Filtre', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   const Divider(height: 30),
                   
-                  // FİYAT FİLTRESİ
                   const Text('Fiyat Seçenekleri', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SwitchListTile(
                     title: const Text('Sadece Ücretsiz Etkinlikler', style: TextStyle(fontWeight: FontWeight.w500)),
                     value: modalUcretsiz,
                     activeColor: const Color(0xFF1D4ED8),
                     contentPadding: EdgeInsets.zero,
-                    onChanged: (deger) {
-                      setModalState(() { modalUcretsiz = deger; });
-                    },
+                    onChanged: (deger) { setModalState(() { modalUcretsiz = deger; }); },
                   ),
                   
-                  // Eğer "Sadece Ücretsiz" seçili değilse Fiyat Kaydırıcısını göster
                   if (!modalUcretsiz) ...[
                     const SizedBox(height: 8),
                     Row(
@@ -118,19 +70,13 @@ class _AnaSayfaState extends State<AnaSayfa> {
                       ],
                     ),
                     Slider(
-                      value: modalMaxFiyat,
-                      min: 10,
-                      max: 500,
-                      divisions: 49,
+                      value: modalMaxFiyat, min: 10, max: 500, divisions: 49,
                       activeColor: const Color(0xFF1D4ED8),
-                      onChanged: (yeniDeger) {
-                        setModalState(() { modalMaxFiyat = yeniDeger; });
-                      },
+                      onChanged: (yeniDeger) { setModalState(() { modalMaxFiyat = yeniDeger; }); },
                     ),
                   ],
                   const SizedBox(height: 16),
                   
-                  // TARİH FİLTRESİ
                   const Text('Zaman Dilimi', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Wrap(
@@ -142,36 +88,22 @@ class _AnaSayfaState extends State<AnaSayfa> {
                         selected: isSelected,
                         selectedColor: const Color(0xFF1D4ED8).withOpacity(0.1),
                         labelStyle: TextStyle(
-                          color: isSelected ? const Color(0xFF1D4ED8) : Colors.black87, 
+                          color: isSelected ? const Color(0xFF1D4ED8) : (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87), 
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal
                         ),
-                        onSelected: (secildi) {
-                          setModalState(() { modalZaman = tarih; });
-                        },
+                        onSelected: (secildi) { setModalState(() { modalZaman = tarih; }); },
                       );
                     }).toList(),
                   ),
                   
                   const SizedBox(height: 32),
-                  
-                  // UYGULA BUTONU
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1D4ED8), 
-                        foregroundColor: Colors.white, 
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
-                      ),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1D4ED8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                       onPressed: () {
-                        // Menüdeki seçimleri ANA EKRANA aktar ve sayfayı yenile
-                        setState(() {
-                          _sadeceUcretsiz = modalUcretsiz;
-                          _maxFiyat = modalMaxFiyat;
-                          _seciliZaman = modalZaman;
-                        });
-                        Navigator.pop(context); // Menüyü kapatır
+                        setState(() { _sadeceUcretsiz = modalUcretsiz; _maxFiyat = modalMaxFiyat; _seciliZaman = modalZaman; });
+                        Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Filtreler uygulandı!'), duration: Duration(seconds: 1)));
                       },
                       child: const Text('Sonuçları Göster', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -188,58 +120,45 @@ class _AnaSayfaState extends State<AnaSayfa> {
 
   @override
   Widget build(BuildContext context) {
-    // 🧠 DEV FİLTRELEME MOTORU: Tüm şartları (Arama, Kategori, Fiyat, Tarih) aynı anda kontrol eder.
     final filtrelenmisListe = _tumEtkinlikler.where((etkinlik) {
-      // 1. Üst Menü Kategori Filtresi
       final kategoriUyuyorMu = _seciliKategori == 'Tümü' || etkinlik['kategori'] == _seciliKategori;
-      
-      // 2. Arama Çubuğu Filtresi
-      final aramaUyuyorMu = etkinlik['baslik'].toString().toLowerCase().contains(_aramaMetni.toLowerCase()) ||
-                            etkinlik['kulup'].toString().toLowerCase().contains(_aramaMetni.toLowerCase());
-      
-      // 3. Fiyat Filtresi
+      final aramaUyuyorMu = etkinlik['baslik'].toString().toLowerCase().contains(_aramaMetni.toLowerCase()) || etkinlik['kulup'].toString().toLowerCase().contains(_aramaMetni.toLowerCase());
       int fiyat = etkinlik['fiyat'];
       bool fiyatUyuyorMu = _sadeceUcretsiz ? (fiyat == 0) : (fiyat <= _maxFiyat);
-      
-      // 4. Zaman Filtresi
       bool zamanUyuyorMu = _seciliZaman == 'Tümü' || etkinlik['zamanDilimi'] == _seciliZaman;
-
-      // Hepsi birden uyuyorsa listeye ekle
       return kategoriUyuyorMu && aramaUyuyorMu && fiyatUyuyorMu && zamanUyuyorMu;
     }).toList();
 
+    // Gece modu açık mı kontrolü (Arama çubuğu rengi için)
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      drawer: const SolYanMenu(),
+      drawer: const SolYanMenu(), // DİKKAT: sol_yan_menu.dart dosyasındaki sabit 'Colors.white' kısımlarını silmelisin.
       appBar: AppBar(
-        title: const Text('CampusHub', style: TextStyle(fontFamily: 'serif', fontWeight: FontWeight.bold)),
+        title: const Text('Event Finder', style: TextStyle(fontFamily: 'serif', fontWeight: FontWeight.bold)),
+        elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.tune), 
-            onPressed: () => _filtreMenusuAc(context), // Gelişmiş filtre butonumuz
-          )
+          IconButton(icon: const Icon(Icons.tune), onPressed: () => _filtreMenusuAc(context))
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // DİNAMİK ARAMA ÇUBUĞU
             Padding(
               padding: const EdgeInsets.all(16),
               child: TextField(
-                onChanged: (deger) {
-                  setState(() { _aramaMetni = deger; });
-                },
+                onChanged: (deger) { setState(() { _aramaMetni = deger; }); },
                 decoration: InputDecoration(
                   hintText: 'Etkinlik, kulüp ara...',
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   filled: true,
-                  fillColor: Colors.white,
+                  // GECE MODU UYUMU: Karanlıksa koyu gri, gündüzse beyaz
+                  fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                 ),
               ),
             ),
             
-            // DİNAMİK KATEGORİLER
             SizedBox(
               height: 40,
               child: ListView(
@@ -253,10 +172,11 @@ class _AnaSayfaState extends State<AnaSayfa> {
                       label: Text(kategori), 
                       selected: isSelected, 
                       selectedColor: const Color(0xFF1D4ED8), 
-                      labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: FontWeight.bold), 
-                      onSelected: (secildiMi) {
-                        setState(() { _seciliKategori = kategori; });
-                      },
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : (isDark ? Colors.white : Colors.black87), 
+                        fontWeight: FontWeight.bold
+                      ), 
+                      onSelected: (secildiMi) { setState(() { _seciliKategori = kategori; }); },
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       side: BorderSide.none,
                     ),
@@ -265,7 +185,6 @@ class _AnaSayfaState extends State<AnaSayfa> {
               ),
             ),
             
-            // Haftanın Enleri
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 24, 16, 12), 
               child: Align(alignment: Alignment.centerLeft, child: Text('Haftanın En Popüler Kulüpleri', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
@@ -276,26 +195,24 @@ class _AnaSayfaState extends State<AnaSayfa> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 children: [
-                  _buildKulupKutusu(context, 'TI', 'Tech Innovators'),
-                  _buildKulupKutusu(context, 'MS', 'Music Society'),
-                  _buildKulupKutusu(context, 'AA', 'Athletics Assoc.'),
+                  _buildKulupKutusu(context, 'TI', 'Tech Innovators', isDark),
+                  _buildKulupKutusu(context, 'MS', 'Music Society', isDark),
+                  _buildKulupKutusu(context, 'AA', 'Athletics Assoc.', isDark),
                 ],
               ),
             ),
 
-            // DİNAMİK ETKİNLİK IZGARASI
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 12), 
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Yaklaşan Etkinlikler', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('${filtrelenmisListe.length} sonuç', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  Text('${filtrelenmisListe.length} sonuç', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                 ],
               )
             ),
             
-            // Eğer arama/filtre sonucu boşsa
             if (filtrelenmisListe.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(32.0),
@@ -303,7 +220,7 @@ class _AnaSayfaState extends State<AnaSayfa> {
                   children: [
                     Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
                     const SizedBox(height: 16),
-                    Text('Aradığınız kritere uygun etkinlik bulunamadı.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[600])),
+                    const Text('Aradığınız kritere uygun etkinlik bulunamadı.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               )
@@ -313,24 +230,13 @@ class _AnaSayfaState extends State<AnaSayfa> {
                 physics: const NeverScrollableScrollPhysics(), 
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.70, // Kart boy oranı
+                  crossAxisCount: 2, mainAxisSpacing: 16, crossAxisSpacing: 16, childAspectRatio: 0.70,
                 ),
                 itemCount: filtrelenmisListe.length,
                 itemBuilder: (context, index) {
                   final e = filtrelenmisListe[index];
-                  // Rakam olan fiyatı String'e çeviriyoruz
                   String fiyatMetni = e['fiyat'] == 0 ? 'Ücretsiz' : '₺${e['fiyat']}';
-
-                  return EtkinlikKarti(
-                    baslik: e['baslik'], 
-                    kulup: e['kulup'], 
-                    fiyat: fiyatMetni, 
-                    tarih: e['tarih'], // YENİ: Tarih bilgisi karta gönderiliyor
-                    resimUrl: e['resimUrl']
-                  );
+                  return EtkinlikKarti(baslik: e['baslik'], kulup: e['kulup'], fiyat: fiyatMetni, tarih: e['tarih'], resimUrl: e['resimUrl']);
                 },
               ),
               
@@ -339,23 +245,23 @@ class _AnaSayfaState extends State<AnaSayfa> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {}, 
-        backgroundColor: Colors.teal,
-        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+        onPressed: () {}, backgroundColor: const Color(0xFF1D4ED8), child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
       ),
     );
   }
 
- Widget _buildKulupKutusu(BuildContext context, String harf, String isim) {
+ Widget _buildKulupKutusu(BuildContext context, String harf, String isim, bool isDark) {
     return GestureDetector(
-      // YENİ EKLENEN KISIM: Kulüp adını sayfaya yollar
-      onTap: () {
-        Navigator.pushNamed(context, '/club-profile', arguments: {'kulupAdi': isim});
-      },
+      onTap: () { Navigator.pushNamed(context, '/club-profile', arguments: {'kulupAdi': isim}); },
       child: Container(
         width: 130,
         margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
+        // GECE MODU UYUMU: Kartın arkası ve çerçevesi
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white, 
+          borderRadius: BorderRadius.circular(16), 
+          border: Border.all(color: isDark ? Colors.grey.shade800 : Colors.grey.shade200)
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -8,11 +8,8 @@ class EtkinlikDetayEkrani extends StatefulWidget {
 }
 
 class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
-  // Hafıza Değişkenleri
   bool _biletAlindiMi = false;
   bool _takipEdiliyorMu = false;
-  
-  // Etkileşim Hafızası (Beğeni ve Yorum)
   bool _begenildiMi = false;
   int _begeniSayisi = 24;
 
@@ -21,8 +18,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
       _begenildiMi = !_begenildiMi;
       _begenildiMi ? _begeniSayisi++ : _begeniSayisi--;
     });
-    // Her basıldığında alt tarafta minik bir bilgi balonu çıkarır
-    ScaffoldMessenger.of(context).clearSnackBars(); // Üst üste binmesini engeller
+    ScaffoldMessenger.of(context).clearSnackBars(); 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_begenildiMi ? 'Favorilere Eklendi ❤️' : 'Favorilerden Çıkarıldı'), 
@@ -31,27 +27,26 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
     );
   }
 
-  // Aşağıdan kayarak açılan Yorum Penceresi
   void _yorumPenceresiAc() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Klavyenin üstüne çıkabilmesi için
+      isScrollControlled: true, 
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // GECE MODU UYUMU
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom, // Klavye açılınca UI yukarı kayar
+            bottom: MediaQuery.of(context).viewInsets.bottom, 
             left: 16, right: 16, top: 16,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(10))),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[400], borderRadius: BorderRadius.circular(10))),
               const SizedBox(height: 16),
               const Text('Yorumlar', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const Divider(),
               
-              // Örnek Yorumlar
               ListTile(
                 leading: CircleAvatar(backgroundColor: Colors.blue[100], child: const Text('AY', style: TextStyle(color: Colors.blue))),
                 title: const Text('Ahmet Yılmaz', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
@@ -64,7 +59,6 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
               ),
               const SizedBox(height: 8),
               
-              // Yorum Yazma Alanı
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: TextField(
@@ -75,7 +69,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.send, color: Color(0xFF1D4ED8)),
                       onPressed: () {
-                        Navigator.pop(context); // Göndere basınca pencereyi kapatır
+                        Navigator.pop(context); 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Yorumunuz paylaşıldı!'), duration: Duration(seconds: 2)),
                         );
@@ -91,7 +85,6 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
     );
   }
 
-  // Bilet Alma Dialog Penceresi
   void _biletAlOnay() {
     showDialog(
       context: context,
@@ -129,7 +122,9 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
 
   @override
   Widget build(BuildContext context) {
-    // DÜZELTME BURADA: Tıklanan kartın verilerini alıyoruz
+    // GECE MODU KONTROLÜ
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final etkinlikVerisi = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {
       'baslik': 'Bilinmeyen Etkinlik',
       'kulup': 'Bilinmeyen Kulüp',
@@ -141,51 +136,47 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
     String kulupBasHarfleri = etkinlikVerisi['kulup'].length >= 2 ? etkinlikVerisi['kulup'].substring(0, 2).toUpperCase() : 'KL';
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          // ÜST RESİM VE İKONLAR
           SliverAppBar(
             expandedHeight: 250.0,
             pinned: true,
-            backgroundColor: const Color(0xFF1D4ED8),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Gece modunda arkası siyah olur
             flexibleSpace: FlexibleSpaceBar(
-              // DİNAMİK RESİM
               background: Image.network(etkinlikVerisi['resimUrl'], fit: BoxFit.cover),
             ),
+            // ÜST İKONLAR (Gece modunda beyaz, gündüz siyah ikon)
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                backgroundColor: Colors.white.withOpacity(0.8),
-                child: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.black), onPressed: () => Navigator.pop(context)),
+                backgroundColor: isDark ? Colors.black54 : Colors.white70,
+                child: IconButton(icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black), onPressed: () => Navigator.pop(context)),
               ),
             ),
             actions: [
-              // Üstteki Beğeni Butonu (Aşağıdaki ile senkronize çalışır)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.8),
+                  backgroundColor: isDark ? Colors.black54 : Colors.white70,
                   child: IconButton(
-                    icon: Icon(_begenildiMi ? Icons.favorite : Icons.favorite_border, color: _begenildiMi ? Colors.red : Colors.black),
+                    icon: Icon(_begenildiMi ? Icons.favorite : Icons.favorite_border, color: _begenildiMi ? Colors.red : (isDark ? Colors.white : Colors.black)),
                     onPressed: _begeniTetikle,
                   ),
                 ),
               ),
-              // Üstteki Paylaş Butonu
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.8),
+                  backgroundColor: isDark ? Colors.black54 : Colors.white70,
                   child: IconButton(
-                    icon: const Icon(Icons.share, color: Colors.black),
+                    icon: Icon(Icons.share, color: isDark ? Colors.white : Colors.black),
                     onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Bağlantı Panoya Kopyalandı!'))),
                   ),
                 ),
               ),
             ],
           ),
-          // DETAY BÖLÜMÜ
+          
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -194,18 +185,17 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(color: isDark ? Colors.blue.withOpacity(0.2) : Colors.blue[50], borderRadius: BorderRadius.circular(20)),
                     child: const Text('Etkinlik Detayı', style: TextStyle(color: Color(0xFF1D4ED8), fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   const SizedBox(height: 12),
-                  // DİNAMİK BAŞLIK
                   Text(etkinlikVerisi['baslik'], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   
-                  // DİNAMİK Tarih ve Konum
+                  // DİNAMİK Tarih ve Konum (Gece modunda koyu gri arka plan)
                   Row(
                     children: [
-                      Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.calendar_month, color: Color(0xFF1D4ED8))),
+                      Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: isDark ? Colors.grey[800] : Colors.grey[100], borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.calendar_month, color: Color(0xFF1D4ED8))),
                       const SizedBox(width: 12),
                       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(etkinlikVerisi['tarih'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
                     ],
@@ -213,7 +203,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.location_on, color: Color(0xFF1D4ED8))),
+                      Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: isDark ? Colors.grey[800] : Colors.grey[100], borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.location_on, color: Color(0xFF1D4ED8))),
                       const SizedBox(width: 12),
                       const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Mühendislik Fakültesi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), Text('Konferans Salonu A', style: TextStyle(color: Colors.grey, fontSize: 14))]),
                     ],
@@ -221,7 +211,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                   
                   const Divider(height: 40),
                   
-                  // DİNAMİK KULÜP ALANI
+                  // KULÜP ALANI
                   GestureDetector(
                     onTap: () => Navigator.pushNamed(context, '/club-profile', arguments: {'kulupAdi': etkinlikVerisi['kulup']}),
                     child: Row(
@@ -229,12 +219,11 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                         CircleAvatar(radius: 24, backgroundColor: const Color(0xFF1D4ED8), child: Text(kulupBasHarfleri, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18))),
                         const SizedBox(width: 12),
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(etkinlikVerisi['kulup'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), const Text('Organizatör', style: TextStyle(color: Colors.grey, fontSize: 14))])),
-                        // Kulüp Takip Butonu
                         GestureDetector(
                           onTap: () => setState(() => _takipEdiliyorMu = !_takipEdiliyorMu),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(color: _takipEdiliyorMu ? Colors.green[50] : Colors.blue[50], borderRadius: BorderRadius.circular(20)),
+                            decoration: BoxDecoration(color: _takipEdiliyorMu ? Colors.green.withOpacity(0.2) : Colors.blue.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
                             child: Text(_takipEdiliyorMu ? 'Takip Ediliyor' : 'Takip Et', style: TextStyle(color: _takipEdiliyorMu ? Colors.green : const Color(0xFF1D4ED8), fontWeight: FontWeight.bold)),
                           ),
                         )
@@ -244,31 +233,33 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                   
                   const SizedBox(height: 24),
 
-                  // YENİ: ETKİLEŞİM BUTONLARI ÇUBUĞU (Beğen, Yorum Yap, Paylaş)
+                  // ETKİLEŞİM BUTONLARI ÇUBUĞU
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border.symmetric(horizontal: BorderSide(color: Colors.grey.shade200)),
-                    ),
+                    decoration: BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: isDark ? Colors.grey.shade800 : Colors.grey.shade200))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildEtkilesimButonu(
                           icon: _begenildiMi ? Icons.favorite : Icons.favorite_border,
-                          renk: _begenildiMi ? Colors.red : Colors.grey[700]!,
+                          // Gece modunda beyaz, gündüz modunda koyu gri
+                          renk: _begenildiMi ? Colors.red : (isDark ? Colors.white70 : Colors.grey[700]!),
                           metin: '$_begeniSayisi Beğeni',
+                          isDark: isDark,
                           onTap: _begeniTetikle,
                         ),
                         _buildEtkilesimButonu(
                           icon: Icons.chat_bubble_outline,
-                          renk: Colors.grey[700]!,
+                          renk: isDark ? Colors.white70 : Colors.grey[700]!,
                           metin: '2 Yorum',
+                          isDark: isDark,
                           onTap: _yorumPenceresiAc,
                         ),
                         _buildEtkilesimButonu(
                           icon: Icons.share,
-                          renk: Colors.grey[700]!,
+                          renk: isDark ? Colors.white70 : Colors.grey[700]!,
                           metin: 'Paylaş',
+                          isDark: isDark,
                           onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Bağlantı kopyalandı!'))),
                         ),
                       ],
@@ -279,8 +270,9 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                   
                   const Text('Etkinlik Hakkında', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
-                  const Text('Geleceğin teknolojileri ve yapay zekanın boyutlarını tartışacağımız bu eşsiz etkinliği kaçırmayın!', style: TextStyle(color: Colors.black87, height: 1.5, fontSize: 15)),
-                  const SizedBox(height: 100), // Alt menü arkasında kalmasın diye boşluk
+                  // Renk tanımını SİLDİK, artık temadan (Karanlık/Aydınlık) otomatik kendi rengini bulacak
+                  const Text('Geleceğin teknolojileri ve yapay zekanın boyutlarını tartışacağımız bu eşsiz etkinliği kaçırmayın!', style: TextStyle(height: 1.5, fontSize: 15)),
+                  const SizedBox(height: 100), 
                 ],
               ),
             ),
@@ -288,17 +280,20 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
         ],
       ),
       
-      // DİNAMİK BİLET AL BUTONU (Bottom Sheet)
+      // ALTTAKİ BİLET AL BUTONU
       bottomSheet: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))]),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor, 
+          // Çizgi/Gölge rengi karanlıkta daha belirgin, gündüz hafif olsun
+          boxShadow: [BoxShadow(color: isDark ? Colors.black54 : Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))]
+        ),
         child: Row(
           children: [
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // DİNAMİK FİYAT
                 Text(etkinlikVerisi['fiyat'], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1D4ED8))),
                 const Text('Kontenjan: 150 kişi', style: TextStyle(color: Colors.grey, fontSize: 12)),
               ],
@@ -323,7 +318,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
   }
 
   // Etkileşim butonlarını çizen yardımcı fonksiyon
-  Widget _buildEtkilesimButonu({required IconData icon, required Color renk, required String metin, required VoidCallback onTap}) {
+  Widget _buildEtkilesimButonu({required IconData icon, required Color renk, required String metin, required bool isDark, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -333,7 +328,8 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
           children: [
             Icon(icon, color: renk, size: 22),
             const SizedBox(width: 6),
-            Text(metin, style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w500)),
+            // Gece modunda yazılar parlasın, gündüz siyah dursun
+            Text(metin, style: TextStyle(color: isDark ? Colors.white70 : Colors.grey[800], fontWeight: FontWeight.w500)),
           ],
         ),
       ),

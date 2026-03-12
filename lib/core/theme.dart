@@ -10,7 +10,6 @@ class AppTheme {
       scaffoldBackgroundColor: backgroundColor,
       fontFamily: 'Roboto',
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 0,
         centerTitle: true,

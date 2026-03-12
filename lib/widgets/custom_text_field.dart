@@ -14,13 +14,14 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       obscureText: isPassword,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(icon, color: Colors.grey),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? Colors.grey[850] : Colors.grey[50],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12), 
           borderSide: BorderSide.none,

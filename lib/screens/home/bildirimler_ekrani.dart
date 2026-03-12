@@ -6,7 +6,6 @@ class BildirimlerEkrani extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('Bildirimler', style: TextStyle(fontWeight: FontWeight.bold))),
       body: ListView(
         children: [

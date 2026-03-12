@@ -45,7 +45,6 @@ class _KulupProfilEkraniState extends State<KulupProfilEkrani> {
     String harf = kulupAdi.length >= 2 ? kulupAdi.substring(0, 2).toUpperCase() : 'KL';
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(title: Text('$kulupAdi Profili')),
       body: SingleChildScrollView(
         child: Column(
@@ -65,7 +64,7 @@ class _KulupProfilEkraniState extends State<KulupProfilEkrani> {
                   bottom: -40,
                   child: CircleAvatar(
                     radius: 44,
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
                     child: CircleAvatar(
                       radius: 40,
                       backgroundColor: Colors.blue[900],

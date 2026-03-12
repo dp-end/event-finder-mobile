@@ -46,7 +46,7 @@ class BiletlerimEkrani extends StatelessWidget {
   Widget _buildBiletKarti(String baslik, String tarih, String konum, String biletNo, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade300),
       ),

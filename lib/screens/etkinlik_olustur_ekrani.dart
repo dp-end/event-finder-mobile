@@ -52,7 +52,6 @@ class _EtkinlikOlusturEkraniState extends State<EtkinlikOlusturEkrani> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('Yeni Etkinlik Oluştur', style: TextStyle(fontWeight: FontWeight.bold))),
       body: _yukleniyor 
         ? const Center(
@@ -103,7 +102,7 @@ class _EtkinlikOlusturEkraniState extends State<EtkinlikOlusturEkrani> {
                               Positioned(
                                 top: 8, right: 8,
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
                                   child: IconButton(
                                     icon: const Icon(Icons.close, color: Colors.red),
                                     onPressed: () => setState(() => _fotoSecildi = false),
