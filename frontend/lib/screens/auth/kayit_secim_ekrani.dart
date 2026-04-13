@@ -30,7 +30,7 @@ class KayitSecimEkrani extends StatelessWidget {
         decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(16)),
         child: Row(
           children: [
-            CircleAvatar(radius: 30, backgroundColor: const Color(0xFF1D4ED8).withOpacity(0.1), child: Icon(ikon, size: 30, color: const Color(0xFF1D4ED8))),
+            CircleAvatar(radius: 30, backgroundColor: const Color(0xFF1D4ED8).withValues(alpha: 0.1), child: Icon(ikon, size: 30, color: const Color(0xFF1D4ED8))),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(baslik, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), const SizedBox(height: 4), Text(altBaslik, style: TextStyle(color: Colors.grey[600]))])),
             const Icon(Icons.chevron_right, color: Colors.grey),

@@ -12,6 +12,7 @@ import 'screens/profile/kulup_profil_ekrani.dart';
 import 'screens/home/biletlerim_ekrani.dart';
 import 'screens/home/bildirimler_ekrani.dart';
 import 'screens/profile/ayarlar_ekrani.dart';
+import 'screens/kulup_kesfet_ekrani.dart';
 
 void main() {
   runApp(const CampusHubApp());
@@ -22,8 +23,14 @@ class CampusHubApp extends StatelessWidget {
 
   // TEMA HAFIZASI
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
-  // YENİ: DİL HAFIZASI (Varsayılan Türkçe)
+  // DİL HAFIZASI
   static final ValueNotifier<String> langNotifier = ValueNotifier('Türkçe');
+  // GİRİŞ YAPAN KULLANICI BİLGİSİ (null = giriş yapılmamış)
+  static final ValueNotifier<Map<String, dynamic>?> userNotifier = ValueNotifier(null);
+  // KULLANICI TİPİ: 'student' = öğrenci, 'club' = kulüp
+  static final ValueNotifier<String> userTypeNotifier = ValueNotifier('student');
+  // JWT TOKEN (API isteklerinde Authorization header için)
+  static final ValueNotifier<String?> tokenNotifier = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +71,7 @@ class CampusHubApp extends StatelessWidget {
             '/club-profile': (context) => const KulupProfilEkrani(),
             '/notifications': (context) => const BildirimlerEkrani(),
             '/settings': (context) => const AyarlarEkrani(),
+            '/club-discover': (context) => const KulupKesfetEkrani(),
           },
         );
       },

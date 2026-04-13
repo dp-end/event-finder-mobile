@@ -5,15 +5,17 @@ class EtkinlikKarti extends StatefulWidget {
   final String kulup;
   final String fiyat;
   final String resimUrl;
-  final String tarih; // YENİ EKLENDİ: Tarih bilgisi
+  final String tarih;
+  final String? etkinlikId; // API'den gelen UUID (opsiyonel, detay sayfasında kullanılır)
 
   const EtkinlikKarti({
-    super.key, 
-    required this.baslik, 
-    required this.kulup, 
-    required this.fiyat, 
+    super.key,
+    required this.baslik,
+    required this.kulup,
+    required this.fiyat,
     required this.resimUrl,
-    required this.tarih, // YENİ EKLENDİ
+    required this.tarih,
+    this.etkinlikId,
   });
 
   @override
@@ -100,6 +102,7 @@ class _EtkinlikKartiState extends State<EtkinlikKarti> {
         'fiyat': widget.fiyat,
         'resimUrl': widget.resimUrl,
         'tarih': widget.tarih,
+        if (widget.etkinlikId != null) 'etkinlikId': widget.etkinlikId,
       }),
       child: Container(
         decoration: BoxDecoration(

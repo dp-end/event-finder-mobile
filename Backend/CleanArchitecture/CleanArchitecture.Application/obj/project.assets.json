@@ -460,19 +460,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Dell\\.nuget\\packages\\": {}
+    "/Users/habib/.nuget/packages/": {}
   },
   "project": {
     "version": "1.1.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dell\\Desktop\\mobilproje\\backend\\CleanArchitecture\\CleanArchitecture.Application\\CleanArchitecture.Core.csproj",
+      "projectUniqueName": "/Users/habib/Documents/Projects/event-finder-mobile/event-finder-mobile/Backend/CleanArchitecture/CleanArchitecture.Application/CleanArchitecture.Core.csproj",
       "projectName": "CleanArchitecture.Core",
-      "projectPath": "C:\\Users\\Dell\\Desktop\\mobilproje\\backend\\CleanArchitecture\\CleanArchitecture.Application\\CleanArchitecture.Core.csproj",
-      "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Dell\\Desktop\\mobilproje\\backend\\CleanArchitecture\\CleanArchitecture.Application\\obj\\",
+      "projectPath": "/Users/habib/Documents/Projects/event-finder-mobile/event-finder-mobile/Backend/CleanArchitecture/CleanArchitecture.Application/CleanArchitecture.Core.csproj",
+      "packagesPath": "/Users/habib/.nuget/packages/",
+      "outputPath": "/Users/habib/Documents/Projects/event-finder-mobile/event-finder-mobile/Backend/CleanArchitecture/CleanArchitecture.Application/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/habib/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -543,7 +543,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

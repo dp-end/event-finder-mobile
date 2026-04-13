@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 
 class EtkinlikDetayEkrani extends StatefulWidget {
   const EtkinlikDetayEkrani({super.key});
@@ -185,7 +186,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(color: isDark ? Colors.blue.withOpacity(0.2) : Colors.blue[50], borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(color: isDark ? Colors.blue.withValues(alpha: 0.2) : Colors.blue[50], borderRadius: BorderRadius.circular(20)),
                     child: const Text('Etkinlik Detayı', style: TextStyle(color: Color(0xFF1D4ED8), fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                   const SizedBox(height: 12),
@@ -223,7 +224,7 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
                           onTap: () => setState(() => _takipEdiliyorMu = !_takipEdiliyorMu),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(color: _takipEdiliyorMu ? Colors.green.withOpacity(0.2) : Colors.blue.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
+                            decoration: BoxDecoration(color: _takipEdiliyorMu ? Colors.green.withValues(alpha: 0.2) : Colors.blue.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
                             child: Text(_takipEdiliyorMu ? 'Takip Ediliyor' : 'Takip Et', style: TextStyle(color: _takipEdiliyorMu ? Colors.green : const Color(0xFF1D4ED8), fontWeight: FontWeight.bold)),
                           ),
                         )
@@ -281,38 +282,73 @@ class _EtkinlikDetayEkraniState extends State<EtkinlikDetayEkrani> {
       ),
       
       // ALTTAKİ BİLET AL BUTONU
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor, 
-          // Çizgi/Gölge rengi karanlıkta daha belirgin, gündüz hafif olsun
-          boxShadow: [BoxShadow(color: isDark ? Colors.black54 : Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))]
-        ),
-        child: Row(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      bottomSheet: ValueListenableBuilder<String>(
+        valueListenable: CampusHubApp.userTypeNotifier,
+        builder: (context, userType, _) {
+          final isClub = userType == 'club';
+
+          return Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              boxShadow: [BoxShadow(color: isDark ? Colors.black54 : Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
+            ),
+            child: Row(
               children: [
-                Text(etkinlikVerisi['fiyat'], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1D4ED8))),
-                const Text('Kontenjan: 150 kişi', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(etkinlikVerisi['fiyat'], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1D4ED8))),
+                    const Text('Kontenjan: 150 kişi', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  ],
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: isClub
+                      // KULÜP HESABI: bilet alamaz, bilgilendirme göster
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.orange.shade300),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.info_outline, color: Colors.orange, size: 18),
+                              SizedBox(width: 8),
+                              Text(
+                                'Kulüpler bilet alamaz',
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      // ÖĞRENCİ HESABI: normal bilet alma butonu
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _biletAlindiMi ? Colors.green : const Color(0xFF1D4ED8),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: _biletAlindiMi ? () => Navigator.pushNamed(context, '/my-tickets') : _biletAlOnay,
+                          child: Text(
+                            _biletAlindiMi ? 'Bileti Gör' : 'Bilet Al / Kayıt Ol',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                ),
               ],
             ),
-            const SizedBox(width: 24),
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _biletAlindiMi ? Colors.green : const Color(0xFF1D4ED8),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: _biletAlindiMi ? () => Navigator.pushNamed(context, '/my-tickets') : _biletAlOnay,
-                child: Text(_biletAlindiMi ? 'Bileti Gör' : 'Bilet Al / Kayıt Ol', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

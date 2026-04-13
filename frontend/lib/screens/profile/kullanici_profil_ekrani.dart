@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../main.dart';
 import '../../widgets/etkinlik_karti.dart';
 
 class KullaniciProfilEkrani extends StatelessWidget {
@@ -6,6 +7,16 @@ class KullaniciProfilEkrani extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Giriş yapan kullanıcının verisi
+    final user = CampusHubApp.userNotifier.value;
+    final firstName = user?['firstName'] as String? ?? '';
+    final lastName  = user?['lastName']  as String? ?? '';
+    final email     = user?['email']     as String? ?? '';
+    final fullName  = '$firstName $lastName'.trim();
+
+    // Avatar baş harfleri: "Habib Dağ" → "HD"
+    final initials = _initials(firstName, lastName);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profilim', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -19,7 +30,7 @@ class KullaniciProfilEkrani extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Kapak ve Profil Fotoğrafı (Facebook tarzı)
+            // Kapak ve Profil Fotoğrafı
             Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.bottomCenter,
@@ -28,48 +39,76 @@ class KullaniciProfilEkrani extends StatelessWidget {
                   height: 150,
                   width: double.infinity,
                   color: Colors.blue[50],
-                  child: Image.network('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800', fit: BoxFit.cover),
+                  child: Image.network(
+                    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800',
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Positioned(
                   bottom: -50,
                   child: CircleAvatar(
                     radius: 54,
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[900] : Colors.white,
-                    child: const CircleAvatar(
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[900]
+                        : Colors.white,
+                    child: CircleAvatar(
                       radius: 50,
-                      backgroundColor: Color(0xFF1D4ED8),
-                      child: Text('BB', style: TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold)),
+                      backgroundColor: const Color(0xFF1D4ED8),
+                      child: Text(
+                        initials,
+                        style: const TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 60),
-            
+
             // Kullanıcı Bilgileri
-            const Text('Burak Büyukelçi', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(
+              fullName.isNotEmpty ? fullName : 'Kullanıcı',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
-            const Text('Akdeniz Üniversitesi • Bilgisayar Mühendisliği', style: TextStyle(fontSize: 14, color: Colors.grey)),
+            Text(
+              email,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
             const SizedBox(height: 16),
-            
+
             // İstatistikler
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildStatKutusu('12', 'Katılım'),
-                Container(width: 1, height: 30, color: Colors.grey[300], margin: const EdgeInsets.symmetric(horizontal: 16)),
+                Container(
+                  width: 1,
+                  height: 30,
+                  color: Colors.grey[300],
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                ),
                 _buildStatKutusu('5', 'Takip Edilen'),
               ],
             ),
-            
+
             const Divider(height: 40),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Align(alignment: Alignment.centerLeft, child: Text('Paylaştığım Etkinlikler', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Paylaştığım Etkinlikler',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
-            
-            // Paylaşılan Etkinlikler (Retweet tarzı)
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -78,16 +117,28 @@ class KullaniciProfilEkrani extends StatelessWidget {
                     children: [
                       const Icon(Icons.repeat, size: 16, color: Colors.grey),
                       const SizedBox(width: 8),
-                      Text('Sen bunu paylaştın', style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.bold)),
+                      Text(
+                        'Sen bunu paylaştın',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Kartımızın boyutu patlamasın diye SizedBox içine aldık
                   const SizedBox(
-                    height: 260, 
-                    width: 200, // Mobilde çok yayılmasın diye genişlik verdik
-                    child: EtkinlikKarti(baslik: 'Yapay Zeka Zirvesi', kulup: 'Tech Innovators', fiyat: 'Ücretsiz', tarih: '2024-01-15', resimUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400'),
-                  )
+                    height: 260,
+                    width: 200,
+                    child: EtkinlikKarti(
+                      baslik: 'Yapay Zeka Zirvesi',
+                      kulup: 'Tech Innovators',
+                      fiyat: 'Ücretsiz',
+                      tarih: '2024-01-15',
+                      resimUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400',
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -96,6 +147,13 @@ class KullaniciProfilEkrani extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // "Habib" + "Dağ" → "HD"
+  String _initials(String first, String last) {
+    final f = first.isNotEmpty ? first[0].toUpperCase() : '';
+    final l = last.isNotEmpty  ? last[0].toUpperCase()  : '';
+    return '$f$l'.isNotEmpty ? '$f$l' : '?';
   }
 
   Widget _buildStatKutusu(String sayi, String etiket) {

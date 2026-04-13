@@ -22,14 +22,88 @@ namespace CleanArchitecture.Infrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ColorHex")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IconName")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-0000-0000-0000-000000000001"),
+                            ColorHex = "#EF4444",
+                            Description = "Spor etkinlikleri",
+                            IconName = "sports_basketball",
+                            Name = "Spor"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-0000-0000-0000-000000000002"),
+                            ColorHex = "#1D4ED8",
+                            Description = "Teknoloji ve yazılım etkinlikleri",
+                            IconName = "computer",
+                            Name = "Teknoloji"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-0000-0000-0000-000000000003"),
+                            ColorHex = "#7C3AED",
+                            Description = "Konser ve müzik etkinlikleri",
+                            IconName = "music_note",
+                            Name = "Müzik"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-0000-0000-0000-000000000004"),
+                            ColorHex = "#D97706",
+                            Description = "Sanat ve kültür etkinlikleri",
+                            IconName = "palette",
+                            Name = "Sanat"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-0000-0000-0000-000000000005"),
+                            ColorHex = "#059669",
+                            Description = "Kariyer ve girişimcilik etkinlikleri",
+                            IconName = "work",
+                            Name = "Kariyer"
+                        });
+                });
+
             modelBuilder.Entity("CleanArchitecture.Application.Entities.Club", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("AdminUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
                     b.Property<string>("Category")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("CoverImageUrl")
                         .HasColumnType("longtext");
@@ -38,17 +112,73 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Initials")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("InstagramHandle")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Clubs");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.ClubFollower", b =>
+                {
+                    b.Property<Guid>("ClubId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<DateTime>("FollowedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("ClubId", "ApplicationUserId");
+
+                    b.ToTable("ClubFollowers");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("UserFullName")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("UserInitials")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Application.Entities.Event", b =>
@@ -57,7 +187,14 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("ClubId")
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("ClubId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Date")
@@ -69,8 +206,16 @@ namespace CleanArchitecture.Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Location")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("OwnerId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,6)");
@@ -79,13 +224,76 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext");
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ClubId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.EventLike", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<DateTime>("LikedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("EventId", "ApplicationUserId");
+
+                    b.ToTable("EventLikes");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<string>("Body")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<Guid?>("RelatedClubId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("RelatedEventId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Application.Entities.Ticket", b =>
@@ -95,13 +303,25 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("ApplicationUserId")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("char(36)");
 
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("QrCode")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("TicketNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -202,6 +422,9 @@ namespace CleanArchitecture.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
@@ -224,7 +447,7 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -250,7 +473,7 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -275,7 +498,7 @@ namespace CleanArchitecture.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -300,7 +523,7 @@ namespace CleanArchitecture.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -322,7 +545,7 @@ namespace CleanArchitecture.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -337,7 +560,7 @@ namespace CleanArchitecture.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -356,18 +579,57 @@ namespace CleanArchitecture.Infrastructure.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CleanArchitecture.Application.Entities.Event", b =>
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.ClubFollower", b =>
                 {
                     b.HasOne("CleanArchitecture.Application.Entities.Club", "Club")
-                        .WithMany("Events")
+                        .WithMany("Followers")
                         .HasForeignKey("ClubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Club");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Comment", b =>
+                {
+                    b.HasOne("CleanArchitecture.Application.Entities.Event", "Event")
+                        .WithMany("Comments")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Event", b =>
+                {
+                    b.HasOne("CleanArchitecture.Application.Entities.Category", "Category")
+                        .WithMany("Events")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CleanArchitecture.Application.Entities.Club", "Club")
+                        .WithMany("Events")
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Club");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.EventLike", b =>
+                {
+                    b.HasOne("CleanArchitecture.Application.Entities.Event", "Event")
+                        .WithMany("Likes")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Application.Entities.Ticket", b =>
@@ -443,13 +705,24 @@ namespace CleanArchitecture.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CleanArchitecture.Application.Entities.Club", b =>
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Category", b =>
                 {
                     b.Navigation("Events");
                 });
 
+            modelBuilder.Entity("CleanArchitecture.Application.Entities.Club", b =>
+                {
+                    b.Navigation("Events");
+
+                    b.Navigation("Followers");
+                });
+
             modelBuilder.Entity("CleanArchitecture.Application.Entities.Event", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Likes");
+
                     b.Navigation("Tickets");
                 });
 

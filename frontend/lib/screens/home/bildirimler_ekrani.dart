@@ -54,11 +54,11 @@ class BildirimlerEkrani extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          color: okunmadi ? const Color(0xFF1D4ED8).withOpacity(0.04) : Colors.transparent,
+          color: okunmadi ? const Color(0xFF1D4ED8).withValues(alpha: 0.04) : Colors.transparent,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: CircleAvatar(
-              backgroundColor: iconColor.withOpacity(0.1),
+              backgroundColor: iconColor.withValues(alpha: 0.1),
               child: Icon(icon, color: iconColor, size: 22),
             ),
             title: Text(title, style: TextStyle(fontSize: 14, fontWeight: okunmadi ? FontWeight.bold : FontWeight.normal)),

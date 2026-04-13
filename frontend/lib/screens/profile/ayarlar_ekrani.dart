@@ -162,7 +162,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     SwitchListTile(
                       title: Text(isEng ? 'Dark Mode' : 'Karanlık Mod'),
                       secondary: const Icon(Icons.dark_mode_outlined),
-                      activeColor: const Color(0xFF1D4ED8),
+                      activeThumbColor: const Color(0xFF1D4ED8),
                       value: isDark,
                       onChanged: (deger) {
                         CampusHubApp.themeNotifier.value = deger ? ThemeMode.dark : ThemeMode.light;
@@ -172,7 +172,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     SwitchListTile(
                       title: Text(isEng ? 'Notifications' : 'Bildirimler'),
                       secondary: const Icon(Icons.notifications_none),
-                      activeColor: const Color(0xFF1D4ED8),
+                      activeThumbColor: const Color(0xFF1D4ED8),
                       value: _bildirimlerAcik,
                       onChanged: (deger) => setState(() => _bildirimlerAcik = deger),
                     ),

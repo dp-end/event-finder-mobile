@@ -64,6 +64,8 @@ namespace CleanArchitecture.Infrastructure.Services
             JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
             AuthenticationResponse response = new AuthenticationResponse();
             response.Id = user.Id;
+            response.FirstName = user.FirstName;
+            response.LastName = user.LastName;
             response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             response.Email = user.Email;
             response.UserName = user.UserName;
