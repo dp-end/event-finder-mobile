@@ -1,10 +1,12 @@
-﻿using CleanArchitecture.Core.DTOs.Account;
+﻿using CleanArchitecture.Application.Entities;
+using CleanArchitecture.Core.DTOs.Account;
 using CleanArchitecture.Core.DTOs.Email;
 using CleanArchitecture.Core.Enums;
 using CleanArchitecture.Core.Exceptions;
 using CleanArchitecture.Core.Interfaces;
 using CleanArchitecture.Core.Settings;
 using CleanArchitecture.Core.Wrappers;
+using CleanArchitecture.Infrastructure.Contexts;
 using CleanArchitecture.Infrastructure.Helpers;
 using CleanArchitecture.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
@@ -30,19 +32,23 @@ namespace CleanArchitecture.Infrastructure.Services
         private readonly IEmailService _emailService;
         private readonly JWTSettings _jwtSettings;
         private readonly IDateTimeService _dateTimeService;
+        private readonly ApplicationDbContext _context;
+
         public AccountService(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IOptions<JWTSettings> jwtSettings,
             IDateTimeService dateTimeService,
             SignInManager<ApplicationUser> signInManager,
-            IEmailService emailService)
+            IEmailService emailService,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwtSettings = jwtSettings.Value;
             _dateTimeService = dateTimeService;
             _signInManager = signInManager;
-            this._emailService = emailService;
+            _emailService = emailService;
+            _context = context;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
@@ -72,6 +78,16 @@ namespace CleanArchitecture.Infrastructure.Services
             var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             response.Roles = rolesList.ToList();
             response.IsVerified = user.EmailConfirmed;
+
+            // Kullanıcı tipini ve kulüp ID'sini belirle
+            bool isClub = rolesList.Contains(Roles.Club.ToString());
+            response.UserType = isClub ? "club" : "student";
+            if (isClub)
+            {
+                var club = _context.Clubs.FirstOrDefault(c => c.AdminUserId == user.Id);
+                response.ClubId = club?.Id.ToString();
+            }
+
             var refreshToken = GenerateRefreshToken(ipAddress);
             response.RefreshToken = refreshToken.Token;
             return response;
@@ -81,37 +97,59 @@ namespace CleanArchitecture.Infrastructure.Services
         {
             var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
             if (userWithSameUserName != null)
-            {
-                throw new ApiException($"Username '{request.UserName}' is already taken.");
-            }
+                throw new ApiException($"'{request.UserName}' kullanıcı adı zaten alınmış.");
+
+            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (userWithSameEmail != null)
+                throw new ApiException($"{request.Email} e-posta adresi zaten kayıtlı.");
+
+            bool isClub = request.UserType?.ToLower() == "club";
+
+            // Kulüp kaydında ClubName zorunlu
+            if (isClub && string.IsNullOrWhiteSpace(request.ClubName))
+                throw new ApiException("Kulüp adı zorunludur.");
+
             var user = new ApplicationUser
             {
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                UserName = request.UserName
+                Email    = request.Email,
+                // Öğrencide FirstName/LastName, kulüpte ClubName/- kullanılır
+                FirstName = isClub ? request.ClubName : request.FirstName,
+                LastName  = isClub ? "" : request.LastName,
+                UserName  = request.UserName,
+                University = request.University,
+                EmailConfirmed = true   // E-posta doğrulamasını otomatik onayla
             };
-            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
-            if (userWithSameEmail == null)
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+                throw new ApiException(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            // Rol ata
+            var role = isClub ? Roles.Club.ToString() : Roles.Basic.ToString();
+            await _userManager.AddToRoleAsync(user, role);
+
+            // Kulüp ise Clubs tablosuna da kaydet
+            if (isClub)
             {
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded)
+                var clubName = request.ClubName.Trim();
+                var initials = clubName.Length >= 2
+                    ? string.Concat(clubName.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()))
+                    : clubName.Substring(0, Math.Min(2, clubName.Length)).ToUpper();
+
+                var club = new Club
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Basic.ToString());
-                    var verificationUri = await SendVerificationEmail(user, origin);
-                    //TODO: Attach Email Service here and configure it via appsettings
-                    //await _emailService.SendAsync(new Core.DTOs.Email.EmailRequest() { From = "mail@codewithmukesh.com", To = user.Email, Body = $"Please confirm your account by visiting this URL {verificationUri}", Subject = "Confirm Registration" });
-                    return  $"User Registered. Please confirm your account by visiting this URL {verificationUri}";
-                }
-                else
-                {
-                    throw new ApiException($"{result.Errors}");
-                }
+                    Name        = clubName,
+                    Initials    = initials,
+                    Description = $"Danışman: {request.AdvisorName ?? "-"} | Tel: {request.PhoneNumber ?? "-"}",
+                    AdminUserId = user.Id
+                };
+                _context.Clubs.Add(club);
+                await _context.SaveChangesAsync();
             }
-            else
-            {
-                throw new ApiException($"Email {request.Email } is already registered.");
-            }
+
+            return isClub
+                ? $"Kulüp kaydı başarılı! Artık giriş yapabilirsiniz."
+                : $"Kayıt başarılı! Artık giriş yapabilirsiniz.";
         }
 
         private async Task<JwtSecurityToken> GenerateJWToken(ApplicationUser user)

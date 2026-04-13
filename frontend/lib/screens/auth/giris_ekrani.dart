@@ -45,34 +45,31 @@ class _GirisEkraniState extends State<GirisEkrani> {
       if (response.statusCode == 200) {
         final userData = jsonDecode(response.body) as Map<String, dynamic>;
         CampusHubApp.userNotifier.value = userData;
-        // JWT token'ı kaydet (API isteklerinde kullanmak için)
+        // JWT token'ı kaydet
         CampusHubApp.tokenNotifier.value = userData['jwToken'] as String?;
-        // Kullanıcı tipini global state'e kaydet
-        CampusHubApp.userTypeNotifier.value = _seciliTip;
+        // Kullanıcı tipini backend'den al (roles listesine göre otomatik belirlendi)
+        final userType = userData['userType'] as String? ?? _seciliTip;
+        CampusHubApp.userTypeNotifier.value = userType;
 
         if (mounted) {
           Navigator.pushReplacementNamed(context, '/home');
         }
       } else {
+        String mesaj = 'E-posta veya şifre hatalı!';
+        try {
+          final body = jsonDecode(response.body) as Map<String, dynamic>;
+          mesaj = body['message'] as String? ?? mesaj;
+        } catch (_) {}
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('E-posta veya şifre hatalı!')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mesaj)));
         }
       }
     } catch (e) {
       debugPrint("BAĞLANTI HATASI DETAYI: $e");
-
-      // Backend bağlantısı yoksa demo modda giriş yap
       if (mounted) {
-        CampusHubApp.userNotifier.value = {
-          'firstName': _seciliTip == 'club' ? 'Tech Innovators' : 'Demo',
-          'lastName': _seciliTip == 'club' ? 'Club' : 'Kullanıcı',
-          'email': _emailController.text,
-          'userName': _seciliTip == 'club' ? 'techclub' : 'demo_user',
-        };
-        CampusHubApp.userTypeNotifier.value = _seciliTip;
-        Navigator.pushReplacementNamed(context, '/home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sunucuya bağlanılamadı. Backend açık mı?')),
+        );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -181,9 +178,9 @@ class _GirisEkraniState extends State<GirisEkrani> {
                           width: 24,
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                         )
-                      : Text(
-                          _seciliTip == 'club' ? 'Kulüp Girişi Yap' : 'Öğrenci Girişi Yap',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      : const Text(
+                          'Giriş Yap',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                 ),
               ),

@@ -14,6 +14,7 @@ namespace CleanArchitecture.Infrastructure.Seeds
             await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Moderator.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Basic.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.Club.ToString()));
         }
     }
 }

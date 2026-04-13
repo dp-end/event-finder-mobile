@@ -92,8 +92,8 @@ class _EtkinlikOlusturEkraniState extends State<EtkinlikOlusturEkrani> {
         'quota':       int.tryParse(_kontenjanController.text.trim()) ?? 100,
         'imageUrl':    'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800',
         'categoryId':  _kategoriIdler[_seciliKategori],
-        // Kulüp girişiyse kulüp ID'si, öğrenciyse null
-        'clubId':      null,
+        // Kulüp girişiyse login'den gelen clubId'yi gönder, öğrenciyse null
+        'clubId':      CampusHubApp.userNotifier.value?['clubId'],
       };
 
       final response = await http.post(

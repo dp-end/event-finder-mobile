@@ -1,9 +1,11 @@
 using CleanArchitecture.Application.Entities;
 using CleanArchitecture.Core.DTOs.Event;
 using CleanArchitecture.Core.Interfaces;
+using CleanArchitecture.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -14,10 +16,12 @@ namespace CleanArchitecture.WebApi.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventRepository _eventRepo;
+        private readonly ApplicationDbContext _context;
 
-        public EventsController(IEventRepository eventRepo)
+        public EventsController(IEventRepository eventRepo, ApplicationDbContext context)
         {
             _eventRepo = eventRepo;
+            _context = context;
         }
 
         // GET /api/events
@@ -69,6 +73,19 @@ namespace CleanArchitecture.WebApi.Controllers
         {
             var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            // Frontend clubId gönderemediyse, bu kullanıcının admin olduğu kulübü bul
+            var resolvedClubId = dto.ClubId;
+            if (resolvedClubId == null && ownerId != null)
+            {
+                // uid claim'i kullanıcı GUID'ini tutar
+                var uid = User.FindFirstValue("uid");
+                if (uid != null)
+                {
+                    var adminClub = _context.Clubs.FirstOrDefault(c => c.AdminUserId == uid);
+                    resolvedClubId = adminClub?.Id;
+                }
+            }
+
             var entity = new Event
             {
                 Title = dto.Title,
@@ -80,7 +97,7 @@ namespace CleanArchitecture.WebApi.Controllers
                 Quota = dto.Quota,
                 ImageUrl = dto.ImageUrl,
                 CategoryId = dto.CategoryId,
-                ClubId = dto.ClubId,    // öğrenci etkinliği ise null
+                ClubId = resolvedClubId,
                 OwnerId = ownerId,
                 IsActive = true
             };

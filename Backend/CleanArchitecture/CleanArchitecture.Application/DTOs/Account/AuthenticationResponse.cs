@@ -15,5 +15,12 @@ namespace CleanArchitecture.Core.DTOs.Account
         public string JWToken { get; set; }
         [JsonIgnore]
         public string RefreshToken { get; set; }
+
+        // Giriş sonrası frontend'e kullanıcı tipini bildirmek için
+        // "Club" rolü varsa "club", yoksa "student"
+        public string UserType { get; set; }
+
+        // Kulüp admin girişinde kulübün ID'si (etkinlik oluştururken kullanılır)
+        public string ClubId { get; set; }
     }
 }

@@ -5,6 +5,7 @@
         SuperAdmin,
         Admin,
         Moderator,
-        Basic
+        Basic,
+        Club
     }
 }
